@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",                    // Modern JavaScript features
+    "module": "CommonJS",                  // Node.js uses CommonJS
+    "lib": ["ES2022"],                    // Include latest ECMAScript features
+    "sourceMap": true,                     // Useful for debugging
+    "outDir": "./dist",                   // Output compiled files to dist
+    "rootDir": "./src",                   // Source files are in src
+    "strict": true,                       // Enable all strict type checking
+    "noImplicitAny": true,               // Don't allow implicit any types
+    "strictNullChecks": true,            // Better null and undefined handling
+    "strictFunctionTypes": true,         // Stricter function type checking
+    "strictBindCallApply": true,         // Strict 'bind', 'call', 'apply'
+    "strictPropertyInitialization": true, // Class property initialization checking
+    "noImplicitThis": true,              // Raise error on 'this' with implied 'any'
+    "alwaysStrict": true,                // Parse in strict mode
+    "esModuleInterop": true,             // Better import() and require() interop
+    "skipLibCheck": true,                // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Ensure consistent file casing
+    "moduleResolution": "node",          // Use Node.js module resolution
+    "baseUrl": "./src",                  // Base directory for module resolution
+    "paths": {                           // Path aliases for imports
+      "@/*": ["*"]                       // Allow @/ imports from src
+    },
+    "resolveJsonModule": true,           // Allow importing JSON files
+    "declaration": true,                 // Generate .d.ts files
+    "emitDecoratorMetadata": true,      // Emit decorator metadata
+    "experimentalDecorators": true,      // Enable decorators
+    "removeComments": true              // Remove comments in output
+  },
+  "include": [
+    "src/**/*"                          // Include all files in src
+  ],
+  "exclude": [
+    "node_modules",                     // Exclude node_modules
+    "dist",                            // Exclude built files
+    "tests",                           // Exclude test files
+    "**/*.spec.ts",                    // Exclude test files
+    "**/*.test.ts"                     // Exclude test files
+  ]
+}
