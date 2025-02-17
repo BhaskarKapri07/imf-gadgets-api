@@ -45,3 +45,7 @@ Content-Type: application/json
   "description": "Updated description",
   "status": "DEPLOYED"
 }
+
+### Decommission Gadget
+DELETE {{baseUrl}}/gadgets/93f712bb-e166-4467-b0e3-d6baa831fa4b
+Authorization: Bearer {{authToken}}

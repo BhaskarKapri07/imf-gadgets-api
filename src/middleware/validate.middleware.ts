@@ -57,3 +57,17 @@ export const validateUpdateGadget = (
   
     next();
   };
+
+export const validateDecommission = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { id } = req.params;
+  
+    if (!id) {
+      throw new AppError(400, 'Gadget ID is required');
+    }
+  
+    next();
+  };

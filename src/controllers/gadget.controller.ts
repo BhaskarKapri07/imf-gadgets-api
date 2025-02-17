@@ -129,3 +129,58 @@ export const updateGadget = async (req: Request, res: Response) => {
     throw new AppError(500, 'Error updating gadget');
   }
 };
+
+
+export const decommissionGadget = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    // Check if gadget exists
+    const existingGadget = await prisma.gadget.findUnique({
+      where: { id }
+    });
+
+    if (!existingGadget) {
+      throw new AppError(404, 'Gadget not found');
+    }
+
+    // Check if gadget is already decommissioned
+    if (existingGadget.status === 'DECOMMISSIONED') {
+      throw new AppError(400, 'Gadget is already decommissioned');
+    }
+
+    // Check if gadget is destroyed
+    if (existingGadget.status === 'DESTROYED') {
+      throw new AppError(400, 'Cannot decommission a destroyed gadget');
+    }
+
+    // Create status history record
+    await prisma.statusHistory.create({
+      data: {
+        gadgetId: id,
+        oldStatus: existingGadget.status,
+        newStatus: 'DECOMMISSIONED'
+      }
+    });
+
+    // Update gadget
+    const decommissionedGadget = await prisma.gadget.update({
+      where: { id },
+      data: {
+        status: 'DECOMMISSIONED',
+        decommissionedAt: new Date()
+      }
+    });
+
+    res.json({
+      status: 'success',
+      message: 'Gadget successfully decommissioned',
+      data: decommissionedGadget
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(500, 'Error decommissioning gadget');
+  }
+};
