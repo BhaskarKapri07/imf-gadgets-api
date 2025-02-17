@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, GadgetStatus } from '@prisma/client';
 import { generateCodename } from '../utils/codename.util'
 import { AppError } from '../utils/error.util';
+import { validateAndProcessStatusChange } from '../utils/status.util';
 
 const prisma = new PrismaClient();
 
@@ -72,5 +73,59 @@ export const createGadget = async (req: Request, res: Response) => {
       throw error;
     }
     throw new AppError(500, 'Error creating gadget');
+  }
+};
+
+export const updateGadget = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { description, status } = req.body;
+
+    // Check if gadget exists
+    const existingGadget = await prisma.gadget.findUnique({
+      where: { id }
+    });
+
+    if (!existingGadget) {
+      throw new AppError(404, 'Gadget not found');
+    }
+
+    // If status is changing, validate the transition
+    if (status && status !== existingGadget.status) {
+      await validateAndProcessStatusChange(existingGadget.status, status as GadgetStatus);
+      
+      // Create status history record
+      await prisma.statusHistory.create({
+        data: {
+          gadgetId: id,
+          oldStatus: existingGadget.status,
+          newStatus: status as GadgetStatus
+        }
+      });
+    }
+
+    // Update gadget
+    const updatedGadget = await prisma.gadget.update({
+      where: { id },
+      data: {
+        ...(description && { description }),
+        ...(status && { status: status as GadgetStatus }),
+        ...((status === 'DECOMMISSIONED') && { decommissionedAt: new Date() }),
+        ...((status === 'DESTROYED') && { destroyedAt: new Date() })
+      }
+    });
+
+    res.json({
+      status: 'success',
+      data: {
+        ...updatedGadget,
+        missionSuccessProbability: Math.floor(Math.random() * (95 - 30 + 1)) + 30
+      }
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(500, 'Error updating gadget');
   }
 };

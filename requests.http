@@ -16,3 +16,32 @@ Content-Type: application/json
 {
   "description": "A high-tech pen that can emit electromagnetic pulses to disable electronic devices."
 }
+
+
+### Update Gadget Description
+PATCH {{baseUrl}}/gadgets/93f712bb-e166-4467-b0e3-d6baa831fa4b
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "description": "Updated: A high-tech pen with enhanced electromagnetic pulse capability."
+}
+
+### Update Gadget Status
+PATCH {{baseUrl}}/gadgets/93f712bb-e166-4467-b0e3-d6baa831fa4b
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "status": "DEPLOYED"
+}
+
+### Update Both Description and Status
+PATCH {{baseUrl}}/gadgets/93f712bb-e166-4467-b0e3-d6baa831fa4b
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "description": "Updated description",
+  "status": "DEPLOYED"
+}
