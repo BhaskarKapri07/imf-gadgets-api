@@ -7,7 +7,8 @@ export const errorHandler: ErrorRequestHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  // If it's our custom error
+
+  // If it's custom error
   if (err instanceof AppError) {
     res.status(err.statusCode).json({
       status: 'error',

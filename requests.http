@@ -14,7 +14,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "description": "A high-tech pen that can emit electromagnetic pulses to disable electronic devices."
+  "description": "A lipstick that is mini rocket launcher"
 }
 
 
@@ -49,3 +49,17 @@ Content-Type: application/json
 ### Decommission Gadget
 DELETE {{baseUrl}}/gadgets/93f712bb-e166-4467-b0e3-d6baa831fa4b
 Authorization: Bearer {{authToken}}
+
+
+### Request Self-Destruct Code
+POST {{baseUrl}}/gadgets/8fc21a40-717f-4956-bad4-4e725c3c692d/self-destruct
+Authorization: Bearer {{authToken}}
+
+### Confirm Self-Destruct
+POST {{baseUrl}}/gadgets/8fc21a40-717f-4956-bad4-4e725c3c692d/self-destruct/confirm
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "confirmationCode": "L2KDZS"
+}

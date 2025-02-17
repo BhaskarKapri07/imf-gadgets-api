@@ -1,8 +1,9 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { PrismaClient, GadgetStatus } from '@prisma/client';
 import { generateCodename } from '../utils/codename.util'
 import { AppError } from '../utils/error.util';
 import { validateAndProcessStatusChange } from '../utils/status.util';
+import { createConfirmationCode, verifyConfirmationCode } from '../utils/confirmation-code.util';
 
 const prisma = new PrismaClient();
 
@@ -182,5 +183,94 @@ export const decommissionGadget = async (req: Request, res: Response) => {
       throw error;
     }
     throw new AppError(500, 'Error decommissioning gadget');
+  }
+};
+
+
+// Request self-destruct code
+export const requestSelfDestruct = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    // Check if gadget exists
+    const gadget = await prisma.gadget.findUnique({
+      where: { id }
+    });
+
+    if (!gadget) {
+      throw new AppError(404, 'Gadget not found');
+    }
+
+    // Check if gadget can be destroyed
+    if (gadget.status === 'DESTROYED') {
+      throw new AppError(400, 'Gadget is already destroyed');
+    }
+
+    if (gadget.status === 'DECOMMISSIONED') {
+      throw new AppError(400, 'Cannot destroy a decommissioned gadget');
+    }
+
+    // Generate confirmation code
+    const confirmationCode = createConfirmationCode(id);
+
+    res.json({
+      status: 'success',
+      message: 'Self-destruct sequence initiated',
+      data: {
+        confirmationCode,
+        expiresIn: '5 minutes'
+      }
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(500, 'Error initiating self-destruct sequence');
+  }
+};
+
+// Confirm self-destruct
+export const confirmSelfDestruct = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const { confirmationCode } = req.body;
+
+    // Check if gadget exists
+    const gadget = await prisma.gadget.findUnique({
+      where: { id }
+    });
+
+    if (!gadget) {
+      throw new AppError(404, 'Gadget not found');
+    }
+
+    // Verify confirmation code
+    verifyConfirmationCode(id, confirmationCode);
+
+    // Create status history record
+    await prisma.statusHistory.create({
+      data: {
+        gadgetId: id,
+        oldStatus: gadget.status,
+        newStatus: 'DESTROYED'
+      }
+    });
+
+    // Update gadget status
+    const destroyedGadget = await prisma.gadget.update({
+      where: { id },
+      data: {
+        status: 'DESTROYED',
+        destroyedAt: new Date()
+      }
+    });
+
+    res.json({
+      status: 'success',
+      message: 'Gadget successfully destroyed',
+      data: destroyedGadget
+    });
+  } catch (error) {
+      next(error);
   }
 };

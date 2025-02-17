@@ -71,3 +71,28 @@ export const validateDecommission = (
   
     next();
   };
+
+  export const validateSelfDestruct = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { id } = req.params;
+    const { confirmationCode } = req.body;
+  
+    if (!id) {
+      throw new AppError(400, 'Gadget ID is required');
+    }
+  
+    if (req.path.endsWith('/confirm')) {
+        if (!confirmationCode) {
+          throw new AppError(400, 'Confirmation code is required');
+        }
+    
+        if (typeof confirmationCode !== 'string') {
+          throw new AppError(400, 'Invalid confirmation code format');
+        }
+      }
+  
+    next();
+  };
