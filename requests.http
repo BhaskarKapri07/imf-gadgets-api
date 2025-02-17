@@ -1,0 +1,18 @@
+@baseUrl = http://localhost:3000
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3Mzk3OTIyNjcsImV4cCI6MTczOTg3ODY2N30.QCGM7vx048eiBlBXRb8XCYCUnrNjPa-V2PFaq4HmtCo
+
+### Get JWT Token
+GET {{baseUrl}}/auth/token
+
+### Get All Gadgets
+GET {{baseUrl}}/gadgets
+Authorization: Bearer {{authToken}}
+
+### Create New Gadget
+POST {{baseUrl}}/gadgets
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "description": "A high-tech pen that can emit electromagnetic pulses to disable electronic devices."
+}

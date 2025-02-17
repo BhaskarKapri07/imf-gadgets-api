@@ -1,5 +1,8 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
+import { errorHandler, notFoundHandler } from './middleware/error.middleware';
+import authRoutes from './routes/auth.routes';
+import gadgetRoutes from './routes/gadget.routes';  
 
 dotenv.config();
 
@@ -7,14 +10,16 @@ const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Basic test route
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'IMF Gadgets API' });
-});
+app.use('/auth', authRoutes);
+app.use('/gadgets', gadgetRoutes);  
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+  console.log(`⚡️[server]: IMF Gadgets API is running at http://localhost:${port}`);
 });
 
 export default app;
