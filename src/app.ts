@@ -18,8 +18,10 @@ app.use('/gadgets', gadgetRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: IMF Gadgets API is running at http://localhost:${port}`);
-});
+if (require.main === module) {
+  const server = app.listen(port, () => {
+    console.log(`⚡️[server]: IMF Gadgets API is running at http://localhost:${port}`);
+  });
+}
 
 export default app;
