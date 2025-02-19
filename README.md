@@ -36,7 +36,7 @@ A secure API for managing IMF gadgets with status tracking, self-destruct capabi
 
 1. Clone the repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/BhaskarKapri07/imf-gadgets-api.git
 cd imf-gadget-api
 ```
 
