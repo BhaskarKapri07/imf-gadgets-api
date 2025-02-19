@@ -13,8 +13,10 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Development server',
+        url: process.env.NODE_ENV === 'production' 
+          ? 'https://imf-gadgets-api-6eu2.onrender.com/' // Replace with your actual Render URL
+          : 'http://localhost:3000',
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
       },
     ],
     components: {
