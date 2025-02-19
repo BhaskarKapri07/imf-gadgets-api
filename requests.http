@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3000
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3Mzk3OTIyNjcsImV4cCI6MTczOTg3ODY2N30.QCGM7vx048eiBlBXRb8XCYCUnrNjPa-V2PFaq4HmtCo
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3Mzk5NDEzNzAsImV4cCI6MTc0MDAyNzc3MH0.o2zdF5Z1vLdOe9HnxNqOUOSnuz_LbYHS4PAdz_1_9hY
 
 ### Get JWT Token
 GET {{baseUrl}}/auth/token

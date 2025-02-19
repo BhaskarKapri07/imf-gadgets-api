@@ -11,6 +11,12 @@ export const getGadgets = async (req: Request, res: Response, next: NextFunction
   try {
 
     const {status} = req.query;
+
+    // Validate status if provided
+    if (status && !['AVAILABLE', 'DEPLOYED', 'DESTROYED', 'DECOMMISSIONED'].includes(status as string)) {
+      return next(new AppError(400, `Invalid status: ${status}. Must be one of: AVAILABLE, DEPLOYED, DESTROYED, DECOMMISSIONED`));
+    }
+    
     const gadgets = await prisma.gadget.findMany({
       where: status ? { status: status as GadgetStatus } : {}
     });
@@ -30,7 +36,7 @@ export const getGadgets = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const createGadget = async (req: Request, res: Response) => {
+export const createGadget = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { description } = req.body;
     
@@ -74,10 +80,7 @@ export const createGadget = async (req: Request, res: Response) => {
       }
     });
   } catch (error) {
-    if (error instanceof AppError) {
-      throw error;
-    }
-    throw new AppError(500, 'Error creating gadget');
+    next(error);
   }
 };
 
@@ -133,7 +136,7 @@ export const updateGadget = async (req: Request, res: Response, next: NextFuncti
 };
 
 
-export const decommissionGadget = async (req: Request, res: Response) => {
+export const decommissionGadget = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
@@ -180,16 +183,13 @@ export const decommissionGadget = async (req: Request, res: Response) => {
       data: decommissionedGadget
     });
   } catch (error) {
-    if (error instanceof AppError) {
-      throw error;
-    }
-    throw new AppError(500, 'Error decommissioning gadget');
+    next(error);
   }
 };
 
 
 // Request self-destruct code
-export const requestSelfDestruct = async (req: Request, res: Response) => {
+export const requestSelfDestruct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
@@ -223,10 +223,7 @@ export const requestSelfDestruct = async (req: Request, res: Response) => {
       }
     });
   } catch (error) {
-    if (error instanceof AppError) {
-      throw error;
-    }
-    throw new AppError(500, 'Error initiating self-destruct sequence');
+    next(error);
   }
 };
 
