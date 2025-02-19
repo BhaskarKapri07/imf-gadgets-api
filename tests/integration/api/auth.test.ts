@@ -5,15 +5,14 @@ import { Server } from 'http';
 describe('Auth API', () => {
   let server: Server;
 
-  beforeAll((done) => {
-    server = app.listen(0, () => {
-      global.testServer = server;
-      done();
-    });
+  beforeAll(() => {
+    server = app.listen(0);
   });
 
-  afterAll((done) => {
-    server.close(done);
+  afterAll(async () => {
+    await new Promise<void>((resolve) => {
+      server.close(() => resolve());
+    });
   });
 
   describe('GET /auth/token', () => {
