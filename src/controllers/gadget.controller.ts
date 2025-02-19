@@ -7,9 +7,13 @@ import { createConfirmationCode, verifyConfirmationCode } from '../utils/confirm
 
 const prisma = new PrismaClient();
 
-export const getGadgets = async (req: Request, res: Response) => {
+export const getGadgets = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const gadgets = await prisma.gadget.findMany();
+
+    const {status} = req.query;
+    const gadgets = await prisma.gadget.findMany({
+      where: status ? { status: status as GadgetStatus } : {}
+    });
     
     // Add random success probability to each gadget
     const gadgetsWithProbability = gadgets.map(gadget => ({
@@ -22,7 +26,7 @@ export const getGadgets = async (req: Request, res: Response) => {
       data: gadgetsWithProbability
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 };
 
