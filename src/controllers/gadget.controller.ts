@@ -77,7 +77,7 @@ export const createGadget = async (req: Request, res: Response) => {
   }
 };
 
-export const updateGadget = async (req: Request, res: Response) => {
+export const updateGadget = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { description, status } = req.body;
@@ -124,10 +124,7 @@ export const updateGadget = async (req: Request, res: Response) => {
       }
     });
   } catch (error) {
-    if (error instanceof AppError) {
-      throw error;
-    }
-    throw new AppError(500, 'Error updating gadget');
+    next(error);
   }
 };
 
